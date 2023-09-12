@@ -1,26 +1,26 @@
-create database student_management;
+CREATE DATABASE student_management;
 
-use student_management;
+USE student_management;
 
-create table Student(
- id int,
- name varchar(200),
- age int,
- country varchar(50)
+CREATE TABLE Student(
+ id INT,
+ name VARCHAR(200),
+ age INT,
+ country VARCHAR(50)
 );
 
-create table Class(
- id int,
- name varchar(200)
+CREATE TABLE Class(
+ id INT,
+ name VARCHAR(200)
 );
 
-create table Teacher(
- id int,
- name varchar(200),
- age int,
- country varchar(50)
+CREATE TABLE Teacher(
+ id INT,
+ name VARCHAR(200),
+ age INT,
+ country VARCHAR(50)
 );
 
-select * from `class`;
-select * from `student`;
-select * from `teacher`;
+SELECT * FROM `class`;
+SELECT * FROM `student`;
+SELECT * FROM `teacher`;
