@@ -21,6 +21,6 @@ create table Teacher(
  country varchar(50)
 );
 
-SELECT * FROM `class`;
-SELECT * FROM `student`;
-SELECT * FROM `teacher`;
+select * from `class`;
+select * from `student`;
+select * from `teacher`;
