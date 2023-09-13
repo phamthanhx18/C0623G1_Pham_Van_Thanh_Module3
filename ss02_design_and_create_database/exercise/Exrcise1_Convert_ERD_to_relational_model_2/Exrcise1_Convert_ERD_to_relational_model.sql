@@ -4,25 +4,25 @@ use quan_ly_ban_hang;
 
 create table nha_cung_cap(
 	ma_ncc int primary key auto_increment,
-    ten_ncc varchar(50),
+    ten_ncc varchar(50) not null unique,
     dia_chi varchar(256)
 );
 
 create table don_dh(
     ma_ncc int,
 	so_dh int primary key auto_increment,
-    ngay_dh date,
+    ngay_dh date not null,
 	foreign key(ma_ncc) references nha_cung_cap(ma_ncc)
 );
 
 create table vat_tu(
 	ma_vt int primary key auto_increment,
-    ten_vt varchar(50)
+    ten_vt varchar(50) not null
 );
 
 create table dh_detail(
-	so_dh int,
-    ma_vt int,
+	so_dh int not null,
+    ma_vt int not null,
 	foreign key(so_dh) references don_dh(so_dh),
 	foreign key(ma_vt) references vat_tu(ma_vt),
     primary key(so_dh,ma_vt)
