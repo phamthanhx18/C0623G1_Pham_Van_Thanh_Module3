@@ -270,18 +270,23 @@ SELECT
     hop_dong.ma_khach_hang,
     khach_hang.ho_ten,
     loai_khach.ten_loai_khach,
-    ma_hop_dong,
+    hop_dong.ma_hop_dong,
     dich_vu.ten_dich_vu,
     ngay_lam_hop_dong,
     ngay_ket_thuc,
-    (chi_phi_thue) AS total
+	dich_vu_di_kem.ten_dich_vu_di_kem,
+    (chi_phi_thue +(hop_dong_chi_tiet.so_luong*dich_vu_di_kem.gia)) as total_money
 FROM
     hop_dong
         JOIN
+    hop_dong_chi_tiet ON hop_dong.ma_hop_dong = hop_dong_chi_tiet.ma_hop_dong
+		JOIN
+    dich_vu_di_kem ON hop_dong_chi_tiet.ma_dich_vu_di_kem = dich_vu_di_kem.ma_dich_vu_di_kem
+		JOIN
     khach_hang ON hop_dong.ma_khach_hang = khach_hang.ma_khach_hang
         JOIN
     loai_khach ON khach_hang.ma_loai_khach = loai_khach.ma_loai_khach
         JOIN
-    dich_vu ON hop_dong.ma_dich_vu = dich_vu.ma_dich_vu
+    dich_vu ON hop_dong.ma_dich_vu = dich_vu.ma_dich_vu;
 
 
