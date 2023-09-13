@@ -59,3 +59,34 @@ insert into instructor(`name`,birthday, salary)
  values ('nguyen van a','1981-12-12',1,8,null,'anv'),('tran van b','1981-12-12',1,5,null,'bnv');
 
  insert into instructor_class(class_id,instructor_id) values (1,1),(1,2),(2,1),(2,2),(3,1),(3,2);
+ 
+SELECT c.name AS class_name, COUNT(s.id) AS total_students
+FROM class c
+LEFT JOIN student s ON c.id = s.class_id
+GROUP BY c.name;
+
+SELECT c.name, MAX(s.point) AS max_point
+FROM class c
+JOIN student s ON c.id = s.class_id
+GROUP BY c.name;
+
+SELECT c.name, AVG(s.point) AS avg_point
+FROM class c
+JOIN student s ON c.id = s.class_id
+GROUP BY c.name;
+
+SELECT name, birthday
+FROM instructor
+UNION
+SELECT name, birthday
+FROM student;
+
+SELECT name, point
+FROM student
+ORDER BY point DESC
+LIMIT 3;
+
+SELECT *
+FROM student
+ORDER BY point DESC
+LIMIT 1;
