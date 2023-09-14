@@ -41,5 +41,5 @@ FROM
     mark m ON s.StudentId = m.StudentId
         JOIN
     subject sj ON m.SubId = sj.SubId
-ORDER BY mark DESC;
+ORDER BY mark DESC , StudentName ASC;
 
