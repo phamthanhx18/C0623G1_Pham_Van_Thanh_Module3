@@ -260,7 +260,7 @@ GROUP BY khach_hang.ma_khach_hang;
 -- (Với tổng tiền được tính theo công thức như sau: Chi Phí Thuê + Số Lượng * Giá, với Số Lượng và Giá là từ bảng dich_vu_di_kem, hop_dong_chi_tiet)
 -- cho tất cả các khách hàng đã từng đặt phòng. (những khách hàng nào chưa từng đặt phòng cũng phải hiển thị ra).
 
-SELECT DISTINCT
+SELECT 
     kh.ma_khach_hang,
     kh.ho_ten,
     lk.ten_loai_khach,
@@ -268,10 +268,10 @@ SELECT DISTINCT
     dv.ten_dich_vu,
     hd.ngay_lam_hop_dong,
     hd.ngay_ket_thuc,
-    (dv.chi_phi_thue + hct.so_luong * dvdk.gia) AS tong_tien
+    (IFNULL(dv.chi_phi_thue, 0) + SUM(IFNULL(hct.so_luong, 0) * IFNULL(dvdk.gia, 0))) AS tong_tien
 FROM
     khach_hang kh
-        LEFT JOIN
+        JOIN
     loai_khach lk ON kh.ma_loai_khach = lk.ma_loai_khach
         LEFT JOIN
     hop_dong hd ON kh.ma_khach_hang = hd.ma_khach_hang
@@ -280,7 +280,10 @@ FROM
         LEFT JOIN
     hop_dong_chi_tiet hct ON hd.ma_hop_dong = hct.ma_hop_dong
         LEFT JOIN
-    dich_vu_di_kem dvdk ON hct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem;
+    dich_vu_di_kem dvdk ON hct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
+GROUP BY hd.ma_hop_dong , kh.ma_khach_hang
+ORDER BY kh.ma_khach_hang ASC , hd.ma_hop_dong DESC
+;
 
 -- 6. Hiển thị ma_dich_vu, ten_dich_vu, dien_tich, chi_phi_thue, ten_loai_dich_vu của 
 -- tất cả các loại dịch vụ chưa từng được khách hàng thực hiện đặt từ quý 1 của năm 2021 (Quý 1 là tháng 1, 2, 3).
@@ -378,4 +381,27 @@ FROM
 GROUP BY hd.ma_hop_dong
 ;
 
+-- Hiển thị thông tin các dịch vụ đi kèm đã được sử dụng bởi những khách hàng có ten_loai_khach là “Diamond” và có dia_chi ở “Vinh” hoặc “Quảng Ngãi”.
+
+SELECT 
+    dvdk.ma_dich_vu_di_kem, dvdk.ten_dich_vu_di_kem
+FROM
+    hop_dong_chi_tiet hdct
+        JOIN
+    hop_dong hd ON hdct.ma_hop_dong = hd.ma_hop_dong
+        JOIN
+    khach_hang kh ON hd.ma_khach_hang = kh.ma_khach_hang
+        JOIN
+    dich_vu_di_kem dvdk ON hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
+WHERE
+    kh.ma_khach_hang IN (SELECT 
+            kh.ma_khach_hang
+        FROM
+            khach_hang kh
+                JOIN
+            loai_khach lk ON kh.ma_loai_khach = lk.ma_loai_khach
+        WHERE
+            kh.dia_chi LIKE '%Vinh'
+                OR kh.dia_chi LIKE '%Quảng Ngãi'
+                AND lk.ten_loai_khach = 'Diamond');
 
