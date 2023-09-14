@@ -118,14 +118,6 @@ VALUES
 ('Quản lý')
 ;
 
-INSERT INTO bo_phan (ten_bo_phan)
-VALUES
-('Sale-Marketing'),
-('Hành chính'),
-('Phục vụ'),
-('Quản lý')
-;
-
 INSERT INTO nhan_vien (ho_ten, ngay_sinh, so_cmnd, luong, so_dien_thoai, email, dia_chi, ma_vi_tri, ma_trinh_do, ma_bo_phan)
 VALUES
 ('Nguyễn Văn An', '1970-11-07', '456231786', '10000000', '0901234121', 'annguyen@gmail.com', '295 Nguyễn Tất Thành, Đà Nẵng', '1', '3', '1'),
@@ -290,7 +282,8 @@ FROM
         LEFT JOIN
     dich_vu_di_kem dvdk ON hct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem;
 
--- 6.Hiển thị ma_dich_vu, ten_dich_vu, dien_tich, chi_phi_thue, ten_loai_dich_vu của tất cả các loại dịch vụ chưa từng được khách hàng thực hiện đặt từ quý 1 của năm 2021 (Quý 1 là tháng 1, 2, 3).
+-- 6. Hiển thị ma_dich_vu, ten_dich_vu, dien_tich, chi_phi_thue, ten_loai_dich_vu của 
+-- tất cả các loại dịch vụ chưa từng được khách hàng thực hiện đặt từ quý 1 của năm 2021 (Quý 1 là tháng 1, 2, 3).
 SELECT 
     dv.ma_dich_vu,
     dv.ten_dich_vu,
@@ -302,44 +295,42 @@ FROM
         JOIN
     loai_dich_vu ldv ON dv.ma_loai_dich_vu = ldv.ma_loai_dich_vu
 WHERE
-    dv.ma_dich_vu NOT IN (SELECT DISTINCT
+    dv.ma_dich_vu NOT IN (SELECT 
             ma_dich_vu
         FROM
             hop_dong
         WHERE
-            YEAR(ngay_lam_hop_dong) = 2021
-                AND MONTH(ngay_lam_hop_dong) BETWEEN 1 AND 3);
+            MONTH(ngay_lam_hop_dong) BETWEEN 1 AND 3
+                AND YEAR(ngay_lam_hop_dong) = 2021)
+;
 
--- 7. Hiển thị thông tin ma_dich_vu, ten_dich_vu, dien_tich, so_nguoi_toi_da, chi_phi_thue, ten_loai_dich_vu của tất 
--- cả các loại dịch vụ đã từng được khách hàng đặt phòng trong năm 2020 nhưng chưa từng được khách hàng đặt phòng trong năm 2021.
-SELECT 
+-- Hiển thị thông tin ma_dich_vu, ten_dich_vu, dien_tich, so_nguoi_toi_da, chi_phi_thue, ten_loai_dich_vu
+-- của tất cả các loại dịch vụ đã từng được khách hàng đặt phòng trong năm 2020 nhưng chưa từng được khách hàng đặt phòng trong năm 2021.
+
+
+SELECT DISTINCT
     dv.ma_dich_vu,
     dv.ten_dich_vu,
     dv.dien_tich,
-    dv.so_nguoi_toi_da,
     dv.chi_phi_thue,
     ldv.ten_loai_dich_vu
 FROM
     dich_vu dv
         JOIN
     loai_dich_vu ldv ON dv.ma_loai_dich_vu = ldv.ma_loai_dich_vu
+        JOIN
+    hop_dong hd ON dv.ma_dich_vu = hd.ma_dich_vu
 WHERE
-    dv.ma_dich_vu IN (SELECT DISTINCT
+    YEAR(hd.ngay_lam_hop_dong) = 2020
+        AND dv.ma_dich_vu NOT IN (SELECT 
             ma_dich_vu
         FROM
             hop_dong
         WHERE
-            YEAR(ngay_lam_hop_dong) = 2020)
-        AND dv.ma_dich_vu NOT IN (SELECT DISTINCT
-            ma_dich_vu
-        FROM
-            hop_dong
-        WHERE
-            YEAR(ngay_lam_hop_dong) = 2021);
--- 8. Hiển thị thông tin ho_ten khách hàng có trong hệ thống, với yêu cầu ho_ten không trùng nhau. 
+            YEAR(ngay_lam_hop_dong) = 2021)
+;
 
--- Cách 1:
-
+-- Hiển thị thông tin ho_ten khách hàng có trong hệ thống, với yêu cầu ho_ten không trùng nhau.
 SELECT DISTINCT ho_ten
 FROM khach_hang;
 
@@ -358,27 +349,4 @@ WHERE ma_khach_hang IN (
     FROM khach_hang
 );
 
--- 9. Thực hiện thống kê doanh thu theo tháng, nghĩa là tương ứng với mỗi tháng trong năm 2021 thì sẽ có bao nhiêu khách hàng thực hiện đặt phòng.
-SELECT 
-    MONTH(ngay_lam_hop_dong) AS thang,
-    COUNT(DISTINCT ma_khach_hang) AS so_khach_hang
-FROM
-    hop_dong
-WHERE
-    YEAR(ngay_lam_hop_dong) = 2021
-GROUP BY thang;
-
--- 10. Hiển thị thông tin tương ứng với từng hợp đồng thì đã sử dụng bao nhiêu dịch vụ đi kèm.
--- Kết quả hiển thị bao gồm ma_hop_dong, ngay_lam_hop_dong, ngay_ket_thuc, tien_dat_coc, so_luong_dich_vu_di_kem (được tính dựa trên việc sum so_luong ở dich_vu_di_kem).
-
-SELECT 
-    hd.ma_hop_dong,
-    hd.ngay_lam_hop_dong,
-    hd.ngay_ket_thuc,
-    hd.tien_dat_coc,
-    SUM(hct.so_luong) AS so_luong_dich_vu_di_kem
-FROM
-    hop_dong hd
-        LEFT JOIN
-    hop_dong_chi_tiet hct ON hd.ma_hop_dong = hct.ma_hop_dong
-GROUP BY hd.ma_hop_dong , hd.ngay_lam_hop_dong , hd.ngay_ket_thuc , hd.tien_dat_coc;
+-- Thực hiện thống kê doanh thu theo tháng, nghĩa là tương ứng với mỗi tháng trong năm 2021 thì sẽ có bao nhiêu khách hàng thực hiện đặt phòng.
