@@ -304,7 +304,7 @@ WHERE
                 AND YEAR(ngay_lam_hop_dong) = 2021)
 ;
 
--- Hiển thị thông tin ma_dich_vu, ten_dich_vu, dien_tich, so_nguoi_toi_da, chi_phi_thue, ten_loai_dich_vu
+-- 7. Hiển thị thông tin ma_dich_vu, ten_dich_vu, dien_tich, so_nguoi_toi_da, chi_phi_thue, ten_loai_dich_vu
 -- của tất cả các loại dịch vụ đã từng được khách hàng đặt phòng trong năm 2020 nhưng chưa từng được khách hàng đặt phòng trong năm 2021.
 
 
@@ -330,7 +330,7 @@ WHERE
             YEAR(ngay_lam_hop_dong) = 2021)
 ;
 
--- Hiển thị thông tin ho_ten khách hàng có trong hệ thống, với yêu cầu ho_ten không trùng nhau.
+-- 8. Hiển thị thông tin ho_ten khách hàng có trong hệ thống, với yêu cầu ho_ten không trùng nhau.
 SELECT DISTINCT ho_ten
 FROM khach_hang;
 
@@ -349,4 +349,33 @@ WHERE ma_khach_hang IN (
     FROM khach_hang
 );
 
--- Thực hiện thống kê doanh thu theo tháng, nghĩa là tương ứng với mỗi tháng trong năm 2021 thì sẽ có bao nhiêu khách hàng thực hiện đặt phòng.
+-- 9. Thực hiện thống kê doanh thu theo tháng, nghĩa là tương ứng với mỗi tháng trong năm 2021 thì sẽ có bao nhiêu khách hàng thực hiện đặt phòng.
+SELECT 
+    MONTH(hd.ngay_lam_hop_dong) AS 'Tháng',
+    COUNT(hd.ma_khach_hang) AS 'SL'
+FROM
+    hop_dong hd
+        JOIN
+    khach_hang kh ON hd.ma_khach_hang = kh.ma_khach_hang
+WHERE
+    YEAR(hd.ngay_lam_hop_dong) = 2021
+GROUP BY MONTH(hd.ngay_lam_hop_dong)
+ORDER BY MONTH(hd.ngay_lam_hop_dong) ASC;
+
+-- 10. Hiển thị thông tin tương ứng với từng hợp đồng thì đã sử dụng bao nhiêu dịch vụ đi kèm. Kết quả hiển thị bao gồm ma_hop_dong,
+-- ngay_lam_hop_dong, ngay_ket_thuc, tien_dat_coc, so_luong_dich_vu_di_kem (được tính dựa trên việc sum so_luong ở dich_vu_di_kem).
+
+SELECT 
+    hd.ma_hop_dong,
+    hd.ngay_lam_hop_dong,
+    hd.ngay_ket_thuc,
+    hd.tien_dat_coc,
+    SUM(hdct.so_luong)
+FROM
+    hop_dong hd
+        LEFT JOIN
+    hop_dong_chi_tiet hdct ON hd.ma_hop_dong = hdct.ma_hop_dong
+GROUP BY hd.ma_hop_dong
+;
+
+
