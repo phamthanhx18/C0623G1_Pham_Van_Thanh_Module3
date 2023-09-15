@@ -298,14 +298,12 @@ FROM
         JOIN
     loai_dich_vu ldv ON dv.ma_loai_dich_vu = ldv.ma_loai_dich_vu
 WHERE
-    dv.ma_dich_vu NOT IN (SELECT 
-            ma_dich_vu
-        FROM
-            hop_dong
-        WHERE
-            MONTH(ngay_lam_hop_dong) BETWEEN 1 AND 3
-                AND YEAR(ngay_lam_hop_dong) = 2021)
-;
+    dv.ma_dich_vu NOT IN (SELECT ma_dich_vu
+FROM hop_dong
+WHERE ngay_lam_hop_dong BETWEEN "2021-01-01" AND now()
+);
+
+
 
 -- 7. Hiển thị thông tin ma_dich_vu, ten_dich_vu, dien_tich, so_nguoi_toi_da, chi_phi_thue, ten_loai_dich_vu
 -- của tất cả các loại dịch vụ đã từng được khách hàng đặt phòng trong năm 2020 nhưng chưa từng được khách hàng đặt phòng trong năm 2021.
@@ -381,7 +379,7 @@ FROM
 GROUP BY hd.ma_hop_dong
 ;
 
--- Hiển thị thông tin các dịch vụ đi kèm đã được sử dụng bởi những khách hàng có ten_loai_khach là “Diamond” và có dia_chi ở “Vinh” hoặc “Quảng Ngãi”.
+-- 11. Hiển thị thông tin các dịch vụ đi kèm đã được sử dụng bởi những khách hàng có ten_loai_khach là “Diamond” và có dia_chi ở “Vinh” hoặc “Quảng Ngãi”.
 
 SELECT 
     dvdk.ma_dich_vu_di_kem, dvdk.ten_dich_vu_di_kem
@@ -404,4 +402,8 @@ WHERE
             kh.dia_chi LIKE '%Vinh'
                 OR kh.dia_chi LIKE '%Quảng Ngãi'
                 AND lk.ten_loai_khach = 'Diamond');
+
+-- 12. Hiển thị thông tin ma_hop_dong, ho_ten (nhân viên), ho_ten (khách hàng), so_dien_thoai (khách hàng), ten_dich_vu, so_luong_dich_vu_di_kem 
+-- (được tính dựa trên việc sum so_luong ở dich_vu_di_kem), tien_dat_coc của tất cả các dịch vụ đã từng được khách hàng đặt vào 3
+--  tháng cuối năm 2020 nhưng chưa từng được khách hàng đặt vào 6 tháng đầu năm 2021.
 
