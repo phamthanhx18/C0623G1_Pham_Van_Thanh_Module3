@@ -552,16 +552,86 @@ WHERE
             custom.tong_tien > 1000000);
             
 -- 18. Xóa những khách hàng có hợp đồng trước năm 2021 (chú ý ràng buộc giữa các bảng).
+SET SQL_SAFE_UPDATES = 0;
+SET FOREIGN_KEY_CHECKS = 0;
 
-DELETE FROM khach_hang 
-WHERE
-    khach_hang.ma_khach_hang IN (SELECT 
-        kh.ma_khach_hang
-    FROM
-        hop_dong hd
-            JOIN
-        khach_hang kh ON hd.ma_khach_hang = kh.ma_khach_hang
+DELETE FROM hop_dong
+WHERE ma_khach_hang IN (
+    SELECT kh.ma_khach_hang
+    FROM (
+        SELECT hd.ma_khach_hang
+        FROM hop_dong hd
+        WHERE YEAR(hd.ngay_lam_hop_dong) < 2021
+    ) AS kh
+);
+
+DELETE FROM khach_hang
+WHERE ma_khach_hang IN (
+    SELECT kh.ma_khach_hang
+    FROM (
+        SELECT hd.ma_khach_hang
+        FROM hop_dong hd
+        WHERE YEAR(hd.ngay_lam_hop_dong) < 2021
+    ) AS kh
+);
+
+
+SET SQL_SAFE_UPDATES = 1;
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- 19. Cập nhật giá cho các dịch vụ đi kèm được sử dụng trên 10 lần trong năm 2020 lên gấp đôi.
+UPDATE dich_vu_di_kem
+SET gia = gia * 2
+WHERE ma_dich_vu_di_kem IN (
+    SELECT ma_dich_vu_di_kem
+    FROM hop_dong_chi_tiet hdct
+    JOIN hop_dong hd
+    ON hdct.ma_hop_dong = hd.ma_hop_dong
+    WHERE YEAR(ngay_lam_hop_dong) = 2020
+    AND so_luong > 10
+    GROUP BY ma_dich_vu_di_kem
+);
+
+-- Hiển thị thông tin của tất cả các nhân viên và khách hàng có trong hệ thống,
+-- thông tin hiển thị bao gồm id (ma_nhan_vien, ma_khach_hang), ho_ten, email, so_dien_thoai, ngay_sinh, dia_chi.
+SELECT 
+    ma_nhan_vien AS id,
+    ho_ten,
+    email,
+    so_dien_thoai,
+    ngay_sinh,
+    dia_chi
+FROM
+    nhan_vien 
+UNION
+	SELECT 
+    ma_khach_hang AS id,
+    ho_ten,
+    email,
+    so_dien_thoai,
+    ngay_sinh,
+    dia_chi
+FROM
+    khach_hang;
     
+-- 21. Tạo khung nhìn có tên là v_nhan_vien để lấy được thông tin của tất cả các nhân viên
+-- có địa chỉ là “Hải Châu” và đã từng lập hợp đồng cho một hoặc nhiều khách hàng bất kì với ngày lập hợp đồng là “12/12/2019”.
+CREATE VIEW v_nhan_vien AS
+    SELECT 
+        nv.ma_nhan_vien,
+        nv.ho_ten,
+        nv.email,
+        nv.so_dien_thoai,
+        nv.ngay_sinh,
+        nv.dia_chi
+    FROM
+        nhan_vien nv
+            JOIN
+        hop_dong hd ON nv.ma_nhan_vien = hd.ma_nhan_vien
     WHERE
-        YEAR(hd.ngay_lam_hop_dong) < 2021
-    GROUP BY kh.ma_khach_hang);
+        nv.dia_chi LIKE '%Hải Châu%'
+            AND hd.ngay_lam_hop_dong = '2019-12-12';
+
+DROP view v_nhan_vien;
+
+SELECT * FROM v_nhan_vien;
