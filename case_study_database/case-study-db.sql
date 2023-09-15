@@ -502,4 +502,66 @@ GROUP BY hd.ma_nhan_vien
 HAVING COUNT(hd.ma_nhan_vien) <= 3
 ORDER BY hd.ma_nhan_vien;
 
+-- 16. Xóa những Nhân viên chưa từng lập được hợp đồng nào từ năm 2019 đến năm 2021.
+DELETE FROM nhan_vien 
+WHERE
+    ma_nhan_vien NOT IN (SELECT 
+        hd.ma_nhan_vien
+    FROM
+        hop_dong hd
+            JOIN
+        nhan_vien nv ON hd.ma_nhan_vien = nv.ma_nhan_vien
+    
+    WHERE
+        YEAR(hd.ngay_lam_hop_dong) BETWEEN 2019 AND 2021
+    GROUP BY hd.ma_nhan_vien);
+    
+-- 17. Cập nhật thông tin những khách hàng có ten_loai_khach từ Platinum lên Diamond, 
+-- chỉ cập nhật những khách hàng đã từng đặt phòng với Tổng Tiền thanh toán trong năm 2021 là lớn hơn 1.000.000 VNĐ.
+-- (Chi Phí Thuê + Số Lượng * Giá)
 
+UPDATE khach_hang kh 
+SET 
+    ma_loai_khach = (SELECT 
+            ma_loai_khach
+        FROM
+            loai_khach
+        WHERE
+            ten_loai_khach = 'Diamond')
+WHERE
+    kh.ma_khach_hang IN (SELECT 
+            custom.ma_khach_hang
+        FROM
+            (SELECT 
+                kh.ma_khach_hang,
+                    kh.ho_ten,
+                    lk.ten_loai_khach,
+                    (IFNULL(dv.chi_phi_thue, 0) + SUM(IFNULL(hdct.so_luong, 0) * IFNULL(dvdk.gia, 0))) AS tong_tien
+            FROM
+                khach_hang kh
+            JOIN loai_khach lk ON kh.ma_loai_khach = lk.ma_loai_khach
+            JOIN hop_dong hd ON kh.ma_khach_hang = hd.ma_khach_hang
+            JOIN dich_vu dv ON hd.ma_dich_vu = dv.ma_dich_vu
+            JOIN hop_dong_chi_tiet hdct ON hd.ma_hop_dong = hdct.ma_hop_dong
+            JOIN dich_vu_di_kem dvdk ON hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
+            WHERE
+                lk.ten_loai_khach = 'Platinium'
+                    AND YEAR(hd.ngay_lam_hop_dong) = 2021
+            GROUP BY kh.ma_khach_hang) AS custom
+        WHERE
+            custom.tong_tien > 1000000);
+            
+-- 18. Xóa những khách hàng có hợp đồng trước năm 2021 (chú ý ràng buộc giữa các bảng).
+
+DELETE FROM khach_hang 
+WHERE
+    khach_hang.ma_khach_hang IN (SELECT 
+        kh.ma_khach_hang
+    FROM
+        hop_dong hd
+            JOIN
+        khach_hang kh ON hd.ma_khach_hang = kh.ma_khach_hang
+    
+    WHERE
+        YEAR(hd.ngay_lam_hop_dong) < 2021
+    GROUP BY kh.ma_khach_hang);
