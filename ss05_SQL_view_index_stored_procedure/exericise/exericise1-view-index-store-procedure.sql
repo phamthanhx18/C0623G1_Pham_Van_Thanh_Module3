@@ -1,14 +1,14 @@
-create database demo;
+CREATE DATABASE demo;
 
-use demo;
-create table products(
-	id int primary key auto_increment,
-    product_code varchar(50) not null unique,
-    product_name varchar(50) not null,
-    product_price double check (product_price>0),
-    product_amount int check (product_amount>=0),
-    product_description varchar(256),
-    product_status bit
+USE demo;
+CREATE TABLE products (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_code VARCHAR(50) NOT NULL UNIQUE,
+    product_name VARCHAR(50) NOT NULL,
+    product_price DOUBLE CHECK (product_price > 0),
+    product_amount INT CHECK (product_amount >= 0),
+    product_description VARCHAR(256),
+    product_status BIT
 );
 
 insert into products(product_code,product_name,product_price,product_amount,product_description,product_status)
