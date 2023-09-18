@@ -629,9 +629,102 @@ CREATE VIEW v_nhan_vien AS
             JOIN
         hop_dong hd ON nv.ma_nhan_vien = hd.ma_nhan_vien
     WHERE
-        nv.dia_chi LIKE '%Hải Châu%'
-            AND hd.ngay_lam_hop_dong = '2019-12-12';
+        nv.dia_chi LIKE '%Đà Nẵng%'
+            AND hd.ngay_lam_hop_dong = '2021-04-25'
+            ;
 
 DROP view v_nhan_vien;
 
+SET SQL_SAFE_UPDATES = 0;
 SELECT * FROM v_nhan_vien;
+
+-- 22. Thông qua khung nhìn v_nhan_vien thực hiện cập nhật địa chỉ thành
+--  “Liên Chiểu” đối với tất cả các nhân viên được nhìn thấy bởi khung nhìn này.
+UPDATE v_nhan_vien 
+SET 
+    dia_chi = 'Liên Chiểu';
+    
+-- 23. Tạo Stored Procedure sp_xoa_khach_hang dùng để xóa thông tin của một khách hàng nào đó với 
+-- ma_khach_hang được truyền vào như là 1 tham số của sp_xoa_khach_hang.
+DELIMITER //
+CREATE PROCEDURE sp_xoa_khach_hang (
+	ma_khach_hang VARCHAR(45)
+)
+BEGIN
+	DELETE FROM khach_hang
+    WHERE ma_khach_hang = ma_khach_hang;
+END //
+DELIMITER ;
+
+-- 24. Tạo Stored Procedure sp_them_moi_hop_dong dùng để thêm mới vào bảng hop_dong với yêu cầu
+-- sp_them_moi_hop_dong phải thực hiện kiểm tra tính hợp lệ của dữ liệu bổ sung, với nguyên tắc không
+-- được trùng khóa chính và đảm bảo toàn vẹn tham chiếu đến các bảng liên quan.
+
+DELIMITER //
+CREATE PROCEDURE sp_them_moi_hop_dong (
+	ma_hd INT,
+    ngay_lam_hd DATETIME,
+    ngay_ket_thuc_hd DATETIME,
+    tien_dat_coc_hd DOUBLE,
+    ma_nhan_vien_hd INT,
+    ma_khach_hang_hd INT,
+    ma_dich_vu_hd INT
+)
+BEGIN
+	IF(ma_hd IN (select ma_hop_dong from hop_dong)) 
+	THEN  
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'Ma hop dong da ton tai';
+	END IF;
+    
+	IF(tien_dat_coc_hd < 0) 
+	THEN  
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'Tien dat coc khong duoc la so am';
+	END IF;
+    
+	IF(ma_nhan_vien_hd NOT IN (select ma_nhan_vien from nhan_vien)) 
+	THEN  
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'ID nhan vien khong dung';
+	END IF;
+    
+	IF(ma_khach_hang_hd NOT IN (select ma_khach_hang from khach_hang)) 
+	THEN  
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'ID khach hang khong dung';
+	END IF;
+    
+	IF(ma_dich_vu_hd NOT IN (select ma_dich_vu from dich_vu)) 
+	THEN  
+		SIGNAL SQLSTATE '45000'
+		SET MESSAGE_TEXT = 'Dich vu nay khong co trong he thong';
+	END IF;
+    
+    INSERT INTO hop_dong (ma_hop_dong, ngay_lam_hop_dong, ngay_ket_thuc, tien_dat_coc, ma_nhan_vien, ma_khach_hang, ma_dich_vu)
+	VALUES (ma_hd, ngay_lam_hd, ngay_ket_thuc_hd, tien_dat_coc_hd, ma_nhan_vien_hd, ma_khach_hang_hd, ma_dich_vu_hd);
+END //
+DELIMITER ;
+DROP PROCEDURE sp_them_moi_hop_dong;
+call sp_them_moi_hop_dong(14,'2020-12-08','2020-12-08','5000','1','1','3');
+
+-- 25. Tạo Trigger có tên tr_xoa_hop_dong khi xóa bản ghi trong bảng hop_dong thì hiển thị 
+-- tổng số lượng bản ghi còn lại có trong bảng hop_dong ra giao diện console của database.
+
+DELIMITER //
+CREATE TRIGGER tr_xoa_hop_dong
+AFTER DELETE ON hop_dong
+FOR EACH ROW
+BEGIN
+    DECLARE total_count INT;
+    SELECT COUNT(*) INTO total_count FROM hop_dong;
+    SET @message = CONCAT('Số lượng bản ghi còn lại bảng là: ', total_count);
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = @message;
+END //
+DELIMITER ;
+
+DROP TRIGGER tr_xoa_hop_dong;
+
+DELETE FROM hop_dong WHERE ma_hop_dong = 14;
+
