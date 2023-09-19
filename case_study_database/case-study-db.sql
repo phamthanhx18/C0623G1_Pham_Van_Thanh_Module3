@@ -440,7 +440,6 @@ GROUP BY hd.ma_hop_dong;
 -- (Lưu ý là có thể có nhiều dịch vụ có số lần sử dụng nhiều như nhau).
 
 SELECT 
-    dvdk.ma_dich_vu_di_kem,
     dvdk.ten_dich_vu_di_kem,
     SUM(hdct.so_luong) AS 'SL'
 FROM
@@ -449,16 +448,18 @@ FROM
     hop_dong_chi_tiet hdct ON hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
 GROUP BY dvdk.ten_dich_vu_di_kem
 HAVING SUM(hdct.so_luong) IN (SELECT 
-        MAX(hdct.so_luong)
+        MAX(data.sum)
     FROM
-        dich_vu_di_kem dvdk
-            JOIN
-        hop_dong_chi_tiet hdct ON hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem);
+        (SELECT 
+            SUM(hdct.so_luong) AS sum
+        FROM
+            dich_vu_di_kem dvdk
+        JOIN hop_dong_chi_tiet hdct ON hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
+        GROUP BY hdct.ma_dich_vu_di_kem) AS data);
         
-
 -- 14. Hiển thị thông tin tất cả các Dịch vụ đi kèm chỉ mới được sử dụng một lần duy nhất.
 -- Thông tin hiển thị bao gồm ma_hop_dong, ten_loai_dich_vu, ten_dich_vu_di_kem, so_lan_su_dung (được tính dựa trên việc count các ma_dich_vu_di_kem).
-
+SET sql_mode = 0;
 SELECT 
     hd.ma_hop_dong,
     dv.ten_dich_vu,
@@ -553,7 +554,7 @@ WHERE
             
 -- 18. Xóa những khách hàng có hợp đồng trước năm 2021 (chú ý ràng buộc giữa các bảng).
 SET SQL_SAFE_UPDATES = 0;
-SET FOREIGN_KEY_CHECKS = 0;
+SET FOREIGN_KEY_CHECKS = 1;
 
 DELETE FROM hop_dong
 WHERE ma_khach_hang IN (
