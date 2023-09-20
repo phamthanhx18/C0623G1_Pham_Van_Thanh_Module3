@@ -1,13 +1,26 @@
 .main-content {
+    font-family: sans-serif;
     width: 1000px;
     margin: 0 auto;
+}
+.main-content .content {
+    text-align: justify;
 }
 .main-content h1 {
     font-size: 32px;
     color: black;
 }
 .main-content p {
-    font-size: 16px;
+    font-size: 14px;
     color: #181818;
     text-indent: 50px;
+}
+.main-content span {
+    font-weight: bold;
+}
+.main-content span.light-blue {
+    color: #187ec6;
+}
+.main-content span.blue {
+    color: #100c87;
 }
