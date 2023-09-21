@@ -1,78 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Title</title>
+    <title>Trang chủ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
-<div class="row header">
-    <div class="col-5">
+<header>
+    <div class="container">
         <div class="row">
-            <div class="col-2">
-                <div class="logo">
-                    <p>Logo</p>
-                </div>
+            <div class="left">
+                <h1>Logo</h1>
+                <nav>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Project</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </nav>
             </div>
-            <div class="col-9">
-                <div class="menu">
-                    <p><a href="#">Home</a></p>
-                    <p><a href="#">About</a></p>
-                    <p><a href="#">Project</a></p>
-                    <p><a href="#">Contact</a></p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-7">
-        <div class="row">
-            <div class="col-8"></div>
-            <div class="col-4 login-btn"><p>Login</p></div>
-        </div>
-    </div>
-</div>
-<div class="main">
-    <div class="row">
-        <div class="col-3 col-sm-12 taskbar">
-            <ul>
-                <li><a href="#">Link</a></li>
-                <li><a href="#">Link</a></li>
-                <li><a href="#">Link</a></li>
-            </ul>
-        </div>
-        <div class="col-6 col-sm-12 content">
-            <h1>Welcome</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia quae soluta sunt? Ab commodi
-                consequatur dicta eligendi est magnam minima nihil nisi, nobis nulla porro provident quia quos similique
-                soluta! A ab, aliquid dolores, dolorum, ducimus exercitationem expedita explicabo magni maiores maxime
-                quo rem tempore temporibus unde voluptatum. Accusamus assumenda at beatae blanditiis consequatur
-                cupiditate ea earum error et expedita fuga fugiat id impedit laboriosam magnam magni maxime minima odio
-                odit provident quae quidem quo quod quos reprehenderit repudiandae saepe, sapiente sed tempora tempore
-                tenetur vero voluptatem voluptates! Et excepturi magni odit officiis sit! Accusantium adipisci
-                cupiditate iusto magnam nostrum.</p>
-            <hr>
-            <h2>Test</h2>
-            <p>Lorem ipsum...</p>
-        </div>
-        <div class="col-3 col-sm-12">
-            <div class="ads">
-                <p>ADS</p>
-            </div>
-            <div class="ads">
-                <p>ADS</p>
+            <div class="right">
+                <p><i class="fa-solid fa-right-from-bracket"></i> Login</p>
             </div>
         </div>
     </div>
-</div>
-<div class="footer">
-    <div class="row">
-        <div class="col-12">
-            <div class="text">
-                <p>Footer Text</p>
+</header>
+<section>
+    <div class="container">
+        <div class="wrapper">
+            <div class="sidebar">
+                <ul>
+                    <li><a href="#">Link 1</a></li>
+                    <li><a href="#">Link 1</a></li>
+                    <li><a href="#">Link 1</a></li>
+                    <li><a href="#">Link 1</a></li>
+                </ul>
+            </div>
+            <div class="main-content">
+                <h2>Chào mừng đến với trang web của chúng tôi</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consequat rutrum mauris ac interdum.
+                    Proin et
+                    nisl ac odio sollicitudin mattis tincidunt et purus. Sed gravida tellus tortor, at sodales leo
+                    maximus
+                    a. </p>
+                <a href="#" class="btn">Xem thêm</a>
+            </div>
+            <div class="banner">
+                <img src="https://via.placeholder.com/300x250" alt="Quang cao">
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2021 Trang web của chúng tôi. Tất cả quyền được bảo lưu.</p>
+    </div>
+</footer>
 </body>
 </html>

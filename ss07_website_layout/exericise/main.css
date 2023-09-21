@@ -11,12 +11,10 @@ body {
     padding: 0;
     font-family: Arial, sans-serif;
 }
-
 h1, h2, h3, h4, h5, p {
     margin: 0;
     padding: 0;
 }
-
 header {
     background-color: #333;
     color: #fff;
@@ -38,12 +36,10 @@ nav ul li a {
     color: #fff;
     text-decoration: none;
 }
-
 .row {
     display: flex;
     align-items: center;
 }
-
 section {
     background-color: #f2f2f2;
     padding: 50px 0;
@@ -83,7 +79,6 @@ footer {
     width: 40%;
     text-align: right;
 }
-
 .wrapper {
     display: flex;
 }
@@ -93,14 +88,12 @@ footer {
     background-color: #eee;
     padding: 10px;
 }
-
 .sidebar ul {
     text-decoration: none;
     list-style-type: none;
     padding: 0;
     text-align: left;
 }
-
 .sidebar ul li {
     margin-bottom: 10px;
 }
@@ -110,7 +103,6 @@ footer {
     color: #3F51B5;
     font-weight: 700;
 }
-
 .main-content {
     flex-grow: 1;
     padding: 10px;
@@ -131,6 +123,7 @@ footer {
 @media only screen and (max-width: 767px) {
     .left, .right {
         width: 100%;
+        text-align: center;
     }
 
     .right {
@@ -150,7 +143,6 @@ footer {
         display: inline-block;
         margin: 0 10px;
     }
-
     .wrapper {
         flex-wrap: wrap;
         justify-content: center;
@@ -168,7 +160,6 @@ footer {
     .main-content {
         order: 1;
         margin-right: 20px;
-        min-height: fit-content;
     }
 
     .banner {
@@ -181,11 +172,9 @@ footer {
         align-items: center;
         justify-content: space-evenly;
     }
-
     .sidebar ul li {
         margin-right: 10px;
     }
-
 }
 
 img {
