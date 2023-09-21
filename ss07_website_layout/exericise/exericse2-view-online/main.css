@@ -161,3 +161,33 @@ footer:before {
     background-color: #181818;
     z-index: 1;
 }
+@media only screen and (max-width: 1024px) {
+    header h1 {
+        position: relative;
+        color: #eee;
+        float: unset;
+        right: 0;
+    }
+}
+@media only screen and (max-width: 767px) {
+    nav {
+        display: block;
+        float: unset;
+    }
+    header h1 {
+        color: #eee;
+        text-align: center;
+        margin-top: 15px;
+        float: unset;
+        right: unset;
+    }
+    .banner img {
+        height: unset;
+    }
+    nav ul {
+        display: none;
+    }
+    .movie {
+        width: 40%;
+    }
+}
