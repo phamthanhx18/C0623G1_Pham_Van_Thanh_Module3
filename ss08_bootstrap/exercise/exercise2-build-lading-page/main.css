@@ -1,0 +1,134 @@
+.navbar-brand {
+    border-right: black 2px solid;
+    padding-right: 15px;
+}
+
+a.nav-link.active {
+    font-weight: 600;
+}
+
+a.nav-link {
+    font-size: 14px;
+}
+
+header .nav-item {
+    padding: 0 10px;
+}
+
+.nav-link:hover {
+    border-bottom: 3px solid #262626;
+}
+
+header .fa-solid {
+    color: #0000008c;
+}
+
+header i.fa-solid.fa-user-plus {
+    padding: 12px;
+    border: 1px #0000008c solid;
+    border-radius: 50%;
+}
+
+.btn-shop-header {
+    border-radius: 3px;
+    font-size: 14px;
+    font-weight: 600;
+    background: #0067b8;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.user-header .nav-link:hover {
+    border: unset;
+}
+
+video {
+    width: 100%;
+}
+
+#hero h1 {
+    font-size: 70px;
+}
+
+#hero h2 {
+    font-size: 26px;
+}
+
+h3.align-middle {
+    font-size: 15px;
+}
+
+.carousel-item {
+    height: 200px;
+    /*display: flex !important;*/
+    border: 1px #eee solid;
+    border-radius: 10px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#banner-bottom {
+    min-height: 300px;
+    display: flex;
+    background: #f2f2f2;
+    border-width: 0.0625rem !important;
+    border-style: solid;
+    border-color: #d2d2d2;
+}
+img.card-img.img-object-cover {
+    width: 100%;
+    height: 100%;
+}
+.tablet-pc {
+    display: flex;
+    align-items: center;
+}
+.tablet-pc a {
+    margin: 0 20px;
+}
+video#lifestyle-video {
+    height: 620px;
+}
+.card.row.justify-content-center {
+    height: 300px;
+    display: flex;
+    align-content: center;
+    flex-direction: row;
+    align-items: center;
+}
+@media only screen and (max-width: 767px) {
+    .container.position-absolute.col-4.col-md-6.offset-1 {
+        width: 300px;
+    }
+    #hero h1 {
+        font-size: 30px;
+    }
+
+    #hero h2 {
+        font-size: 14px !important;
+    }
+    .carousel-item, .carousel-item.active {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 400px !important;
+    }
+    .card.row.justify-content-center {
+        height: auto !important;
+    }
+    section#banner-bottom {
+        display: block;
+    }
+    #banner-bottom .container {
+        height: 200px;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+    }
+    video#lifestyle-video {
+        height: auto;
+    }
+    .col.align-self-center.card-body {
+        text-align: center;
+    }
+}
