@@ -25,7 +25,7 @@ public class ProductRepoImpl implements IProductRepo {
     @Override
     public void add(Product product) {
         productList.add(product);
-        product.setId(productList.size());
+        product.setId(productList.size() + 1);
     }
 
     @Override
