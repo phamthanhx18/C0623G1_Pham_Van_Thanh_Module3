@@ -144,12 +144,11 @@ public class ProductServlet extends HttpServlet {
 
     public void deleteProduct(HttpServletRequest req, HttpServletResponse resp) {
         int id = Integer.parseInt(req.getParameter("id"));
-        Product product = productService.findById(id);
-        if (product == null) {
-            show404(req,resp);
-        } else {
+        try {
             productService.remove(id);
-            displayListProduct(req, resp);
+            displayListProduct(req,resp);
+        } catch (Exception e) {
+            show404(req,resp);
         }
     }
 

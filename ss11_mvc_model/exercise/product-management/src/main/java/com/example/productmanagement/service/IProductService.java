@@ -13,5 +13,5 @@ public interface IProductService {
 
     void update(int id, Product product);
 
-    void remove(int id);
+    void remove(int id) throws Exception;
 }
