@@ -20,6 +20,7 @@ public class UserRepoImpl implements IUserRepo {
     private final static String SELECT_SP = "CALL display_list_user();";
     private final static String UPDATE_SP = "CALL edit_user(?,?,?,?);";
     private final static String DELETE_SP = "CALL delete_user(?);";
+    private static final String SQL_PIVOT = "INSERT INTO user_permision(user_id, permision_id) VALUES(?,?)";
 
 
     @Override
@@ -210,56 +211,60 @@ public class UserRepoImpl implements IUserRepo {
 
     @Override
     public void addUserTransaction(User user, List<Integer> permission) {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-
-        PreparedStatement pstmtAssignment = null;
-
-        ResultSet rs = null;
+        Connection connection = BaseRepository.getConnection();
+        PreparedStatement preparedStatement = null;
+        PreparedStatement prAssignment = null;
+        ResultSet resultSet = null;
         try {
-            conn = BaseRepository.getConnection();
-            conn.setAutoCommit(false);
-            pstmt = conn.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, user.getName());
-            pstmt.setString(2, user.getEmail());
-            pstmt.setString(3, user.getCountry());
-            int rowAffected = pstmt.executeUpdate();
-            rs = pstmt.getGeneratedKeys();
+            connection.setAutoCommit(false);
+
+            preparedStatement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(2, user.getEmail());
+            preparedStatement.setString(3, user.getCountry());
+            int rowAffected = preparedStatement.executeUpdate();
+
+            resultSet = preparedStatement.getGeneratedKeys();
+
             int userId = 0;
-            if (rs.next()) {
-                userId = rs.getInt(1);
+            if (resultSet.next()) {
+                userId = resultSet.getInt(1);
             }
+
             if (rowAffected == 1) {
-                String sqlPivot = "INSERT INTO user_permision(user_id,permision_id) "
-                        + "VALUES(?,?)";
-                pstmtAssignment = conn.prepareStatement(sqlPivot);
-                for (int permisionId : permission) {
-                    pstmtAssignment.setInt(1, userId);
-                    pstmtAssignment.setInt(2, permisionId);
-                    pstmtAssignment.executeUpdate();
+                prAssignment = connection.prepareStatement(SQL_PIVOT);
+
+                for (int permissionId : permission) {
+                    prAssignment.setInt(1, userId);
+                    prAssignment.setInt(2, permissionId);
+                    prAssignment.executeUpdate();
                 }
-                conn.commit();
+                connection.commit();
             } else {
-                conn.rollback();
+                connection.rollback();
             }
-        } catch (SQLException ex) {
+
+        } catch (SQLException e) {
+            e.printStackTrace();
             try {
-                if (conn != null)
-                    conn.rollback();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                if (connection != null) {
+                    connection.rollback();
+                }
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());;
             }
-            System.out.println(ex.getMessage());
-        } finally {
+            System.out.println(e.getMessage());
+        }  finally {
             try {
-                if (rs != null) rs.close();
-                if (pstmt != null) pstmt.close();
-                if (pstmtAssignment != null) pstmtAssignment.close();
-                if (conn != null) conn.close();
+                if (resultSet != null) resultSet.close();
+                if (preparedStatement != null) preparedStatement.close();
+                if (prAssignment != null) prAssignment.close();
+                if (connection != null) connection.close();
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
         }
+
     }
 
     @Override
